@@ -1,0 +1,11 @@
+{
+  "name": "specish",
+  "version": "0.0.1",
+  "description": "Tiny JavaScript test framework",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Ken Whatmough",
+  "license": "ISC"
+}
