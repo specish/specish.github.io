@@ -1,4 +1,4 @@
-import { SpecConfiguration } from "../src/SpecConfiguration.js";
+import { Specish } from "../src/Specish.js";
 
 export class Demo {
   static min(a, b) {
@@ -6,7 +6,7 @@ export class Demo {
   }
 }
 
-const { describe, it, expect, beforeEach } = SpecConfiguration.platform;
+const { describe, it, expect, beforeEach } = Specish.context;
 describe("Demo", () => {
   it("should return the value x as the minimum of x and x", () => {
     const x = 3.14;

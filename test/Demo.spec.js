@@ -1,4 +1,4 @@
-import { SpecConfiguration } from "../src/SpecConfiguration.js";
+import { Specish } from "../src/Specish.js";
 
-SpecConfiguration.platform = { describe, it, expect, beforeEach };
+Specish.context = { describe, it, expect, beforeEach };
 import("../demo/Demo.js");
