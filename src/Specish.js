@@ -1,4 +1,8 @@
 class DefaultSpecRunner {
+  constructor(mockConsole) {
+    this.console = mockConsole || window.console;
+  }
+
   describe(description, callback) {
     // TODO
   }
