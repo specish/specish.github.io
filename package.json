@@ -1,6 +1,6 @@
 {
   "name": "specish",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Tiny JavaScript test framework",
   "main": "index.js",
   "scripts": {
