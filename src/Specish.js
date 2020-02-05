@@ -1,14 +1,29 @@
 class DefaultSpecRunner {
   constructor(mockConsole) {
     this.console = mockConsole || window.console;
+    this.preSpec = [];
+    this.postSpec = [];
   }
 
   describe(description, callback) {
     // TODO
+    this.preSpec.push([]);
+    this.postSpec.push([]);
+
+    callback();
+
+    this.preSpec.pop();
+    this.postSpec.pop();
   }
 
   it(description, callback) {
     // TODO
+    const preSpecs = this.preSpec[this.preSpec.length - 1];
+    for (preSpec of preSpecs) {
+      preSpec();
+    }
+
+    callback();
   }
 
   expect(actualValue) {
@@ -18,6 +33,7 @@ class DefaultSpecRunner {
 
   beforeEach(callback) {
     // TODO
+    this.preSpec[this.preSpec.length - 1].push(callback);
   }
 
   static testSelf({ describe, it, expect, beforeEach }) {
