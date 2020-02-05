@@ -1,49 +1,76 @@
-function peek(arr) {
-  return arr[arr.length - 1];
-}
-
 class DefaultSpecRunner {
   constructor(mockConsole) {
     this.console = mockConsole || window.console;
     this.suiteStack = [];
   }
 
+  getCurrentSuite() {
+    const len = this.suiteStack.length;
+    if (len > 0) {
+      return this.suiteStack[len - 1];
+    } else {
+      throw new Error("No current test suite. Please call describe().");
+    }
+  }
+
   describe(suiteDescription, suiteCallback) {
+    let passing = 0,
+      failing = 0;
+    this.console.time(suiteDescription);
+
     this.suiteStack.push({
       preSpecs: [],
       specs: [],
       postSpecs: []
     });
 
-    // TODO: suiteDescription
     suiteCallback();
 
     const { preSpecs, specs, postSpecs } = this.suiteStack.pop();
     specs.forEach(({ description, callback }) => {
       preSpecs.forEach(preSpec => preSpec());
-      // TODO: description
-      callback();
+      try {
+        callback();
+        passing++;
+        this.console.info(`\u2713 ${description}`);
+      } catch (error) {
+        failing++;
+        this.console.error(`${failing}) ${description}\n${error.message}`);
+      }
       postSpecs.forEach(postSpec => postSpec());
     });
+
+    this.console.timeEnd(suiteDescription);
+    this.console.info(`${passing} passing`);
+    if (failing) {
+      this.console.warn(`${failing} failing`);
+    }
   }
 
   it(description, callback) {
-    const { specs } = peek(this.suiteStack);
+    const { specs } = this.getCurrentSuite();
     specs.push({ description, callback });
   }
 
-  expect(actualValue) {
-    // TODO
-    return null;
+  expect(actual) {
+    return {
+      toEqual: expected => {
+        if (expected !== actual) {
+          this.console.error(
+            `Assertion error: expected ${actual} to equal ${expected}`
+          );
+        }
+      }
+    };
   }
 
   beforeEach(callback) {
-    const { preSpecs } = peek(this.suiteStack);
+    const { preSpecs } = this.getCurrentSuite();
     preSpecs.push(callback);
   }
 
   afterEach(callback) {
-    const { postSpecs } = peek(this.suiteStack);
+    const { postSpecs } = this.getCurrentSuite();
     postSpecs.push(callback);
   }
 
@@ -62,7 +89,8 @@ export default class Specish {
       describe: (...args) => runner.describe(...args),
       it: (...args) => runner.it(...args),
       expect: (...args) => runner.expect(...args),
-      beforeEach: (...args) => runner.beforeEach(...args)
+      beforeEach: (...args) => runner.beforeEach(...args),
+      afterEach: (...args) => runner.afterEach(...args)
     };
   }
 
