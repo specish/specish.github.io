@@ -1,29 +1,35 @@
+function peek(arr) {
+  return arr[arr.length - 1];
+}
+
 class DefaultSpecRunner {
   constructor(mockConsole) {
     this.console = mockConsole || window.console;
-    this.preSpec = [];
-    this.postSpec = [];
+    this.suiteStack = [];
   }
 
-  describe(description, callback) {
-    // TODO
-    this.preSpec.push([]);
-    this.postSpec.push([]);
+  describe(suiteDescription, suiteCallback) {
+    this.suiteStack.push({
+      preSpecs: [],
+      specs: [],
+      postSpecs: []
+    });
 
-    callback();
+    // TODO: suiteDescription
+    suiteCallback();
 
-    this.preSpec.pop();
-    this.postSpec.pop();
+    const { preSpecs, specs, postSpecs } = this.suiteStack.pop();
+    specs.forEach(({ description, callback }) => {
+      preSpecs.forEach(preSpec => preSpec());
+      // TODO: description
+      callback();
+      postSpecs.forEach(postSpec => postSpec());
+    });
   }
 
   it(description, callback) {
-    // TODO
-    const preSpecs = this.preSpec[this.preSpec.length - 1];
-    for (preSpec of preSpecs) {
-      preSpec();
-    }
-
-    callback();
+    const { specs } = peek(this.suiteStack);
+    specs.push({ description, callback });
   }
 
   expect(actualValue) {
@@ -32,8 +38,13 @@ class DefaultSpecRunner {
   }
 
   beforeEach(callback) {
-    // TODO
-    this.preSpec[this.preSpec.length - 1].push(callback);
+    const { preSpecs } = peek(this.suiteStack);
+    preSpecs.push(callback);
+  }
+
+  afterEach(callback) {
+    const { postSpecs } = peek(this.suiteStack);
+    postSpecs.push(callback);
   }
 
   static testSelf({ describe, it, expect, beforeEach }) {
