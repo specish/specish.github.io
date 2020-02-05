@@ -1,4 +1,4 @@
-import { Specish } from "../src/Specish.js";
+import Specish from "../src/Specish.js";
 
 export class Demo {
   static min(a, b) {

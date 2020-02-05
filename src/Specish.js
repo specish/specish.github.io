@@ -43,7 +43,7 @@ class DefaultSpecRunner {
   }
 }
 
-export class Specish {
+export default class Specish {
   static createDefaultContext() {
     const runner = new DefaultSpecRunner();
 
