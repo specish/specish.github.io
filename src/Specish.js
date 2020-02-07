@@ -13,7 +13,7 @@ class DefaultSpecRunner {
     }
   }
 
-  runSuite({ preSpecs, specs, postSpecs }) {
+  runSuite({ preSpecs, specs, postSpecs, innerSuites }) {
     let passing = 0,
       failing = 0;
 
@@ -34,37 +34,39 @@ class DefaultSpecRunner {
     if (failing) {
       this.console.info(`Failing: ${failing} <---`);
     }
+
+    innerSuites.forEach(innerSuite => innerSuite());
   }
 
   describe(description, callback) {
-    this.console.group(description);
+    const innerSuite = () => {
+      this.console.group(description);
 
-    this.suiteStack.push({
-      preSpecs: [],
-      specs: [],
-      postSpecs: []
-    });
+      this.suiteStack.push({
+        preSpecs: [],
+        specs: [],
+        postSpecs: [],
+        innerSuites: []
+      });
 
-    callback();
+      callback();
 
-    this.runSuite(this.suiteStack.pop());
+      this.runSuite(this.suiteStack.pop());
 
-    this.console.groupEnd();
+      this.console.groupEnd();
+    };
+
+    if (this.suiteStack.length > 0) {
+      const { innerSuites } = this.getCurrentSuite();
+      innerSuites.push(innerSuite);
+    } else {
+      innerSuite();
+    }
   }
 
   it(description, callback) {
     const { specs } = this.getCurrentSuite();
     specs.push({ description, callback });
-  }
-
-  expect(actual) {
-    return {
-      toEqual: expected => {
-        if (expected !== actual) {
-          throw new Error(`expected ${actual} to equal ${expected}`);
-        }
-      }
-    };
   }
 
   beforeEach(callback) {
@@ -75,6 +77,16 @@ class DefaultSpecRunner {
   afterEach(callback) {
     const { postSpecs } = this.getCurrentSuite();
     postSpecs.push(callback);
+  }
+
+  expect(actual) {
+    return {
+      toEqual: expected => {
+        if (expected !== actual) {
+          throw new Error(`expected ${actual} to equal ${expected}`);
+        }
+      }
+    };
   }
 
   static testSelf({ describe, it, expect, beforeEach }) {
