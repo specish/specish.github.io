@@ -9,13 +9,11 @@ class DefaultSpecRunner {
     if (len > 0) {
       return this.suiteStack[len - 1];
     } else {
-      throw new Error("No current test suite. Please call describe().");
+      throw new Error("No current test suite. Please use describe().");
     }
   }
 
   describe(suiteDescription, suiteCallback) {
-    let passing = 0,
-      failing = 0;
     this.console.time(suiteDescription);
 
     this.suiteStack.push({
@@ -26,6 +24,8 @@ class DefaultSpecRunner {
 
     suiteCallback();
 
+    let passing = 0,
+      failing = 0;
     const { preSpecs, specs, postSpecs } = this.suiteStack.pop();
     specs.forEach(({ description, callback }) => {
       preSpecs.forEach(preSpec => preSpec());
@@ -33,9 +33,9 @@ class DefaultSpecRunner {
         callback();
         passing++;
         this.console.info(`\u2713 ${description}`);
-      } catch (error) {
+      } catch (err) {
         failing++;
-        this.console.error(`${failing}) ${description}\n${error.message}`);
+        this.console.error(`${failing}) ${description}\n${err.message}`);
       }
       postSpecs.forEach(postSpec => postSpec());
     });
@@ -56,9 +56,7 @@ class DefaultSpecRunner {
     return {
       toEqual: expected => {
         if (expected !== actual) {
-          this.console.error(
-            `Assertion error: expected ${actual} to equal ${expected}`
-          );
+          throw new Error(`expected ${actual} to equal ${expected}`);
         }
       }
     };

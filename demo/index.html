@@ -1,0 +1,16 @@
+<html>
+  <head>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <title>Demo</title>
+  </head>
+  <script>
+    try {
+      new Function("path", "import(path);")("./Demo.js");
+    } catch (err) {
+      console.error("Import failed: " + err.message);
+    }
+  </script>
+  <body>
+    (See console)
+  </body>
+</html>
