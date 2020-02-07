@@ -1,6 +1,6 @@
 {
   "name": "specish",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "description": "Put your specs in the same module as your code",
   "main": "index.js",
   "scripts": {
