@@ -1,6 +1,9 @@
 # specish.github.io
 
-Specish is a tiny bit of JavaScript that allows you to
-put your specs in the same module as your code.
-You can put them at the bottom so they run when you import the module,
-or you can put them in a function so they run when you call the function.
+Put your specs in the same module as your code.
+
+Specish is a very simple JavaScript module
+that allows tests and source code to coexist.
+While useful for simple specs,
+you might find situations where a separate file
+is better for anything more complicated.

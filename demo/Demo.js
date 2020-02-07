@@ -16,4 +16,10 @@ describe("Demo", () => {
   it("should return EPSILON as the minimum of 4 and EPSILON", () => {
     expect(Demo.min(4, Number.EPSILON)).toEqual(Number.EPSILON);
   });
+
+  describe("Number.EPSILON", () => {
+    it("should be insignificant compared to 4", () => {
+      expect(4 + Number.EPSILON).toEqual(4);
+    });
+  });
 });

@@ -13,20 +13,10 @@ class DefaultSpecRunner {
     }
   }
 
-  describe(suiteDescription, suiteCallback) {
-    this.console.time(suiteDescription);
-
-    this.suiteStack.push({
-      preSpecs: [],
-      specs: [],
-      postSpecs: []
-    });
-
-    suiteCallback();
-
+  runSuite({ preSpecs, specs, postSpecs }) {
     let passing = 0,
       failing = 0;
-    const { preSpecs, specs, postSpecs } = this.suiteStack.pop();
+
     specs.forEach(({ description, callback }) => {
       preSpecs.forEach(preSpec => preSpec());
       try {
@@ -35,16 +25,31 @@ class DefaultSpecRunner {
         this.console.info(`\u2713 ${description}`);
       } catch (err) {
         failing++;
-        this.console.error(`${failing}) ${description}\n${err.message}`);
+        this.console.error(`${failing}) ${description}\n---> ${err.message}`);
       }
       postSpecs.forEach(postSpec => postSpec());
     });
 
-    this.console.timeEnd(suiteDescription);
-    this.console.info(`${passing} passing`);
+    this.console.info(`Passing: ${passing}`);
     if (failing) {
-      this.console.warn(`${failing} failing`);
+      this.console.info(`Failing: ${failing} <---`);
     }
+  }
+
+  describe(description, callback) {
+    this.console.group(description);
+
+    this.suiteStack.push({
+      preSpecs: [],
+      specs: [],
+      postSpecs: []
+    });
+
+    callback();
+
+    this.runSuite(this.suiteStack.pop());
+
+    this.console.groupEnd();
   }
 
   it(description, callback) {
