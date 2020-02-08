@@ -2,40 +2,40 @@ class DefaultSpecRunner {
   constructor(mockConsole) {
     this.console = mockConsole || window.console;
     this.suiteStack = [];
+    this.passing = 0;
+    this.failing = 0;
   }
 
   getCurrentSuite() {
     const len = this.suiteStack.length;
-    if (len > 0) {
-      return this.suiteStack[len - 1];
-    } else {
+    if (!len) {
       throw new Error("No current test suite. Please use describe().");
     }
+
+    return this.suiteStack[len - 1];
   }
 
   runSuite({ preSpecs, specs, postSpecs, innerSuites }) {
-    let passing = 0,
-      failing = 0;
-
     specs.forEach(({ description, callback }) => {
       preSpecs.forEach(preSpec => preSpec());
       try {
         callback();
-        passing++;
+        this.passing++;
         this.console.info(`\u2713 ${description}`);
       } catch (err) {
-        failing++;
-        this.console.error(`${failing}) ${description}\n---> ${err.message}`);
+        this.failing++;
+        this.console.error(
+          `${this.failing}) ${description}\n---> ${err.message}`
+        );
       }
       postSpecs.forEach(postSpec => postSpec());
     });
 
-    this.console.info(`Passing: ${passing}`);
-    if (failing) {
-      this.console.info(`Failing: ${failing} <---`);
-    }
-
-    innerSuites.forEach(innerSuite => innerSuite());
+    innerSuites.forEach(innerSuite => {
+      preSpecs.forEach(preSpec => preSpec());
+      innerSuite();
+      postSpecs.forEach(postSpec => postSpec());
+    });
   }
 
   describe(description, callback) {
@@ -56,11 +56,20 @@ class DefaultSpecRunner {
       this.console.groupEnd();
     };
 
-    if (this.suiteStack.length > 0) {
+    if (this.suiteStack.length) {
       const { innerSuites } = this.getCurrentSuite();
       innerSuites.push(innerSuite);
     } else {
+      const label = "Elapsed";
+      this.console.time(label);
+
       innerSuite();
+
+      this.console.timeEnd(label);
+      this.console.info(`Passing: ${this.passing}`);
+      if (this.failing) {
+        this.console.info(`Failing: ${this.failing} <---`);
+      }
     }
   }
 
