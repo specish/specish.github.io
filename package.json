@@ -1,6 +1,6 @@
 {
   "name": "specish",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "An ES6 modules test framework that allows your tests to coexist with your code",
   "main": "index.js",
   "type": "module",
