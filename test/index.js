@@ -1,4 +1,4 @@
 import Specish from "../src/Specish.js";
 
-Specish.context = { describe, it, expect, beforeEach };
+Specish.testSelf(Specish.context);
 import("../demo/Demo.js");

@@ -1,10 +1,11 @@
 {
   "name": "specish",
   "version": "0.0.4",
-  "description": "Put your specs in the same module as your code",
+  "description": "An ES6 modules test framework that allows your tests to coexist with your code",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node test/index.js"
   },
   "repository": {
     "type": "git",

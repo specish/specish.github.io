@@ -1,6 +1,6 @@
 class DefaultSpecRunner {
   constructor(mockConsole) {
-    this.console = mockConsole || window.console;
+    this.console = mockConsole || console;
     this.suiteStack = [];
     this.passing = 0;
     this.failing = 0;
@@ -70,6 +70,7 @@ class DefaultSpecRunner {
       if (this.failing) {
         this.console.info(`Failing: ${this.failing} <---`);
       }
+      this.console.info();
     }
   }
 
