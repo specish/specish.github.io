@@ -106,7 +106,7 @@ class DefaultSpecRunner {
   }
 }
 
-export default class Specish {
+class Specish {
   static createDefaultContext() {
     const runner = new DefaultSpecRunner();
 
@@ -129,3 +129,5 @@ export default class Specish {
 }
 
 Specish.context = Specish.createDefaultContext();
+
+export default Specish;
