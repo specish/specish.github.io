@@ -2,6 +2,10 @@ class DefaultSpecRunner {
   constructor(mockConsole) {
     this.console = mockConsole || console;
     this.suiteStack = [];
+    this.clearStats();
+  }
+
+  clearStats() {
     this.passing = 0;
     this.failing = 0;
   }
@@ -60,6 +64,7 @@ class DefaultSpecRunner {
       const { innerSuites } = this.getCurrentSuite();
       innerSuites.push(innerSuite);
     } else {
+      this.clearStats();
       const label = "Elapsed";
       this.console.time(label);
 
@@ -70,7 +75,6 @@ class DefaultSpecRunner {
       if (this.failing) {
         this.console.info(`Failing: ${this.failing} <---`);
       }
-      this.console.info();
     }
   }
 
@@ -91,9 +95,14 @@ class DefaultSpecRunner {
 
   expect(actual) {
     return {
-      toEqual: expected => {
+      toBe: expected => {
         if (expected !== actual) {
-          throw new Error(`expected ${actual} to equal ${expected}`);
+          throw new Error(`expected ${actual} to be ${expected}`);
+        }
+      },
+      toBeDefined: () => {
+        if (actual === undefined) {
+          throw new Error(`expected ${actual} to be defined`);
         }
       }
     };
@@ -123,7 +132,15 @@ class Specish {
     DefaultSpecRunner.testSelf({ describe, it, expect, beforeEach });
 
     describe("Specish", () => {
-      // TODO: write tests for Specish
+      it("should have a static property 'context'", () => {
+        expect(Specish.context).toBeDefined();
+      });
+
+      describe("Specish.createDefaultContext", () => {
+        it("should return something", () => {
+          expect(Specish.createDefaultContext()).toBeDefined();
+        });
+      });
     });
   }
 }
