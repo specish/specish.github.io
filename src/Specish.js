@@ -1,9 +1,18 @@
-class Specish {
+const ELAPSED_LABEL = "Elapsed";
+
+export default class Specish {
   constructor(mockConsole) {
     this.console = mockConsole || console;
     this.suiteStack = [];
     this.passing = 0;
     this.failing = 0;
+  }
+
+  logStats() {
+    this.console.log(`Passing: ${this.passing}`);
+    if (this.failing) {
+      this.console.log(`Failing: ${this.failing} <---`);
+    }
   }
 
   getCurrentSuite() {
@@ -21,7 +30,7 @@ class Specish {
       try {
         callback();
         this.passing++;
-        this.console.info(`\u2713 ${description}`);
+        this.console.log(`\u2713 ${description}`);
       } catch (err) {
         this.failing++;
         this.console.error(
@@ -60,34 +69,15 @@ class Specish {
       const { innerSuites } = this.getCurrentSuite();
       innerSuites.push(innerSuite);
     } else {
-      this.passing = 0;
-      this.failing = 0;
-      const label = "Elapsed";
-      this.console.time(label);
-
+      this.console.time(ELAPSED_LABEL);
       innerSuite();
-
-      this.console.timeEnd(label);
-      this.console.info(`Passing: ${this.passing}`);
-      if (this.failing) {
-        this.console.info(`Failing: ${this.failing} <---`);
-      }
+      this.console.timeEnd(ELAPSED_LABEL);
     }
   }
 
   it(description, callback) {
     const { specs } = this.getCurrentSuite();
     specs.push({ description, callback });
-  }
-
-  beforeEach(callback) {
-    const { preSpecs } = this.getCurrentSuite();
-    preSpecs.push(callback);
-  }
-
-  afterEach(callback) {
-    const { postSpecs } = this.getCurrentSuite();
-    postSpecs.push(callback);
   }
 
   expect(actual) {
@@ -104,14 +94,25 @@ class Specish {
       }
     };
   }
+
+  beforeEach(callback) {
+    const { preSpecs } = this.getCurrentSuite();
+    preSpecs.push(callback);
+  }
+
+  afterEach(callback) {
+    const { postSpecs } = this.getCurrentSuite();
+    postSpecs.push(callback);
+  }
 }
 
-const defaultInstance = new Specish();
+Specish.defaultInstance = new Specish();
 
-const describe = (...args) => defaultInstance.describe(...args);
-const it = (...args) => defaultInstance.it(...args);
-const beforeEach = (...args) => defaultInstance.beforeEach(...args);
-const afterEach = (...args) => defaultInstance.afterEach(...args);
-const expect = (...args) => defaultInstance.expect(...args);
-
-export { Specish as default, describe, it, beforeEach, afterEach, expect };
+export const logStats = (...args) => Specish.defaultInstance.logStats(...args);
+export const describe = (...args) => Specish.defaultInstance.describe(...args);
+export const it = (...args) => Specish.defaultInstance.it(...args);
+export const expect = (...args) => Specish.defaultInstance.expect(...args);
+export const beforeEach = (...args) =>
+  Specish.defaultInstance.beforeEach(...args);
+export const afterEach = (...args) =>
+  Specish.defaultInstance.afterEach(...args);
