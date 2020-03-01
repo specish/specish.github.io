@@ -2,15 +2,15 @@
   <head>
     <title>Test</title>
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <script>
+      try {
+        new Function("path", "import(path);")("./test/index.js");
+      } catch (err) {
+        console.error("Import failed: " + err.message);
+      }
+    </script>
   </head>
-  <script>
-    try {
-      new Function("path", "import(path);")("./test/index.js");
-    } catch (err) {
-      console.error("Import failed: " + err.message);
-    }
-  </script>
   <body>
-    (See console)
+    (see console)
   </body>
 </html>
