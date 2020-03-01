@@ -1,11 +1,7 @@
-class DefaultSpecRunner {
+class Specish {
   constructor(mockConsole) {
     this.console = mockConsole || console;
     this.suiteStack = [];
-    this.clearStats();
-  }
-
-  clearStats() {
     this.passing = 0;
     this.failing = 0;
   }
@@ -64,7 +60,8 @@ class DefaultSpecRunner {
       const { innerSuites } = this.getCurrentSuite();
       innerSuites.push(innerSuite);
     } else {
-      this.clearStats();
+      this.passing = 0;
+      this.failing = 0;
       const label = "Elapsed";
       this.console.time(label);
 
@@ -107,44 +104,14 @@ class DefaultSpecRunner {
       }
     };
   }
-
-  static testSelf({ describe, it, expect, beforeEach }) {
-    describe("DefaultSpecRunner", () => {
-      // TODO: write tests for DefaultSpecRunner
-    });
-  }
 }
 
-class Specish {
-  static createDefaultContext() {
-    const runner = new DefaultSpecRunner();
+const defaultInstance = new Specish();
 
-    return {
-      describe: (...args) => runner.describe(...args),
-      it: (...args) => runner.it(...args),
-      expect: (...args) => runner.expect(...args),
-      beforeEach: (...args) => runner.beforeEach(...args),
-      afterEach: (...args) => runner.afterEach(...args)
-    };
-  }
+const describe = (...args) => defaultInstance.describe(...args);
+const it = (...args) => defaultInstance.it(...args);
+const beforeEach = (...args) => defaultInstance.beforeEach(...args);
+const afterEach = (...args) => defaultInstance.afterEach(...args);
+const expect = (...args) => defaultInstance.expect(...args);
 
-  static testSelf({ describe, it, expect, beforeEach }) {
-    DefaultSpecRunner.testSelf({ describe, it, expect, beforeEach });
-
-    describe("Specish", () => {
-      it("should have a static property 'context'", () => {
-        expect(Specish.context).toBeDefined();
-      });
-
-      describe("Specish.createDefaultContext", () => {
-        it("should return something", () => {
-          expect(Specish.createDefaultContext()).toBeDefined();
-        });
-      });
-    });
-  }
-}
-
-Specish.context = Specish.createDefaultContext();
-
-export default Specish;
+export { Specish as default, describe, it, beforeEach, afterEach, expect };

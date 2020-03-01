@@ -1,21 +1,22 @@
 # specish.github.io
 
-Most major test frameworks are based on CommonJS
-which means you need to transpile your project
-if it uses ES6 modules.
-Specish is a small test framework based on ES6 modules
-so that you don't need to transpile.
+Most major test frameworks are based on CommonJS.
+To be compatible, projects that are based on ES6 modules
+need to be transpiled.
 
-Specish does not use patterns for spec filenames.
-Instead, you simply import Specish
-and destructure the context into those familar functions
-(`describe`, `it`, `beforeEach`, `afterEach`, `expect`, etc.)
+The Specish framework is based on ES6 modules instead.
+Consider using Specish if your project is based on ES6 modules
+and you don't want to transpile.
 
-You can:
+With Specish, you can run your tests in the browser or Node.js.
 
-- Put your tests in the same module as your code.
-- Run your tests in the browser or Node.js.
+> Specish requires support for ES6 modules.
+>
+> Fortunately most modern browsers support ES6 modules.
+>
+> The latest version of Node.js has experimental support
+> which can be enabled by adding `"type": "module"`
+> in your `package.json` file.
 
-> Note: Specish requires support for ES6 modules.
-> Fortunately, most modern browsers support ES6 modules.
-> The latest version of Node.js has experimental support.
+Specish supports familiar testing functions like
+`describe`, `it`, `beforeEach`, `afterEach`, and `expect`.

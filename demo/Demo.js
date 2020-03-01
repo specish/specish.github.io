@@ -1,4 +1,4 @@
-import Specish from "../src/Specish.js";
+import { describe, it, expect } from "../src/Specish.js";
 
 class Demo {
   static min(a, b) {
@@ -6,7 +6,6 @@ class Demo {
   }
 }
 
-const { describe, it, expect, beforeEach } = Specish.context;
 describe("Demo", () => {
   it("should return the value x as the minimum of x and x", () => {
     const x = 3.14;
@@ -23,6 +22,3 @@ describe("Demo", () => {
     });
   });
 });
-
-// Just a convenient way to run the self-test
-Specish.testSelf(Specish.context);

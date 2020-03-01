@@ -1,3 +1,2 @@
-import Specish from "../src/Specish.js";
-
-import("../demo/Demo.js");
+import "./Specish.spec.js";
+import "../demo/Demo.js";
