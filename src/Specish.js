@@ -1,5 +1,3 @@
-const ELAPSED_LABEL = "Elapsed";
-
 export default class Specish {
   constructor(mockConsole) {
     this.console = mockConsole || console;
@@ -69,9 +67,7 @@ export default class Specish {
       const { innerSuites } = this.getCurrentSuite();
       innerSuites.push(innerSuite);
     } else {
-      this.console.time(ELAPSED_LABEL);
       innerSuite();
-      this.console.timeEnd(ELAPSED_LABEL);
     }
   }
 
