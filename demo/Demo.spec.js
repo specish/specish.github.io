@@ -1,5 +1,5 @@
 import { describe, it, expect } from "../src/Specish.js";
-import Demo from "../demo/Demo.js";
+import Demo from "./Demo.js";
 
 describe("Demo", () => {
   it("should return the value x as the minimum of x and x", () => {
