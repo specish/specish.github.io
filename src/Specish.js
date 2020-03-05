@@ -1,104 +1,69 @@
+import Matcher from "./Matcher.js";
+import RootSuite from "./RootSuite.js";
+import Spec from "./Spec.js";
+import Suite from "./Suite.js";
+
 export default class Specish {
-  constructor(mockConsole) {
-    this.console = mockConsole || console;
-    this.suiteStack = [];
-    this.passing = 0;
-    this.failing = 0;
+  constructor() {
+    this.currentSuite = new RootSuite();
   }
 
-  logStats() {
-    this.console.log(`Passing: ${this.passing}`);
-    if (this.failing) {
-      this.console.log(`Failing: ${this.failing} <---`);
-    }
-  }
+  async logStats(mockConsole) {
+    const localConsole = mockConsole || console;
+    let passing = 0;
+    let failing = 0;
 
-  getCurrentSuite() {
-    const len = this.suiteStack.length;
-    if (!len) {
-      throw new Error("No current test suite. Please use describe().");
-    }
+    // TODO: find a better workaround for the intermittent module loading issue...
+    await new Promise(r => setTimeout(r, 2000));
 
-    return this.suiteStack[len - 1];
-  }
-
-  runSuite({ preSpecs, specs, postSpecs, innerSuites }) {
-    specs.forEach(({ description, callback }) => {
-      preSpecs.forEach(preSpec => preSpec());
-      try {
-        callback();
-        this.passing++;
-        this.console.log(`\u2713 ${description}`);
-      } catch (err) {
-        this.failing++;
-        this.console.error(
-          `${this.failing}) ${description}\n---> ${err.message}`
-        );
+    this.currentSuite.run({
+      suiteStart: description => {
+        localConsole.group(description);
+      },
+      suiteEnd: () => {
+        localConsole.groupEnd();
+      },
+      specPass: description => {
+        passing++;
+        localConsole.log(`\u2713 ${description}`);
+      },
+      specFail: (description, message) => {
+        failing++;
+        localConsole.error(`${failing}) ${description}\n---> ${message}`);
       }
-      postSpecs.forEach(postSpec => postSpec());
     });
 
-    innerSuites.forEach(innerSuite => {
-      preSpecs.forEach(preSpec => preSpec());
-      innerSuite();
-      postSpecs.forEach(postSpec => postSpec());
-    });
+    localConsole.log(`Passing: ${passing}`);
+    if (failing) {
+      localConsole.log(`Failing: ${failing} <---`);
+    }
   }
 
   describe(description, callback) {
-    const innerSuite = () => {
-      this.console.group(description);
+    const innerSuite = new Suite(description);
+    this.currentSuite.addInnerSuite(innerSuite);
 
-      this.suiteStack.push({
-        preSpecs: [],
-        specs: [],
-        postSpecs: [],
-        innerSuites: []
-      });
-
-      callback();
-
-      this.runSuite(this.suiteStack.pop());
-
-      this.console.groupEnd();
-    };
-
-    if (this.suiteStack.length) {
-      const { innerSuites } = this.getCurrentSuite();
-      innerSuites.push(innerSuite);
-    } else {
-      innerSuite();
-    }
+    const previousSuite = this.currentSuite;
+    this.currentSuite = innerSuite;
+    callback();
+    this.currentSuite = previousSuite;
   }
 
   it(description, callback) {
-    const { specs } = this.getCurrentSuite();
-    specs.push({ description, callback });
-  }
-
-  expect(actual) {
-    return {
-      toBe: expected => {
-        if (expected !== actual) {
-          throw new Error(`expected ${actual} to be ${expected}`);
-        }
-      },
-      toBeDefined: () => {
-        if (actual === undefined) {
-          throw new Error(`expected ${actual} to be defined`);
-        }
-      }
-    };
+    const spec = new Spec(description, callback);
+    this.currentSuite.addSpec(spec);
   }
 
   beforeEach(callback) {
-    const { preSpecs } = this.getCurrentSuite();
-    preSpecs.push(callback);
+    this.currentSuite.addPreSpec(callback);
   }
 
   afterEach(callback) {
-    const { postSpecs } = this.getCurrentSuite();
-    postSpecs.push(callback);
+    this.currentSuite.addPostSpec(callback);
+  }
+
+  expect(actual) {
+    return new Matcher(actual);
   }
 }
 
@@ -107,8 +72,8 @@ Specish.defaultInstance = new Specish();
 export const logStats = (...args) => Specish.defaultInstance.logStats(...args);
 export const describe = (...args) => Specish.defaultInstance.describe(...args);
 export const it = (...args) => Specish.defaultInstance.it(...args);
-export const expect = (...args) => Specish.defaultInstance.expect(...args);
 export const beforeEach = (...args) =>
   Specish.defaultInstance.beforeEach(...args);
 export const afterEach = (...args) =>
   Specish.defaultInstance.afterEach(...args);
+export const expect = (...args) => Specish.defaultInstance.expect(...args);
