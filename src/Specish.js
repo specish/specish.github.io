@@ -8,13 +8,10 @@ export default class Specish {
     this.currentSuite = new RootSuite();
   }
 
-  async logStats(mockConsole) {
+  logStats(mockConsole) {
     const localConsole = mockConsole || console;
     let passing = 0;
     let failing = 0;
-
-    // TODO: find a better workaround for the intermittent module loading issue...
-    await new Promise(r => setTimeout(r, 2000));
 
     this.currentSuite.run({
       suiteStart: description => {

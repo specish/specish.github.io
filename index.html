@@ -4,9 +4,7 @@
     <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
     <script>
       try {
-        const importPath = new Function("path", "import(path);");
-        importPath("./demo/Demo.spec.js");
-        importPath("./test/index.js");
+        new Function("path", "import(path);")("./demo/index.js");
       } catch (err) {
         console.error("Import failed: " + err.message);
       }
