@@ -8,7 +8,7 @@ export default class Specish {
     this.currentSuite = new RootSuite();
   }
 
-  logStats(mockConsole) {
+  runCurrentSuite(mockConsole) {
     const localConsole = mockConsole || console;
     let passing = 0;
     let failing = 0;
@@ -22,11 +22,11 @@ export default class Specish {
       },
       specPass: description => {
         passing++;
-        localConsole.log(`\u2713 ${description}`);
+        localConsole.log(description);
       },
       specFail: (description, message) => {
         failing++;
-        localConsole.error(`${failing}) ${description}\n---> ${message}`);
+        localConsole.error(`${description} ---> ${message}`);
       }
     });
 
@@ -66,7 +66,6 @@ export default class Specish {
 
 Specish.defaultInstance = new Specish();
 
-export const logStats = (...args) => Specish.defaultInstance.logStats(...args);
 export const describe = (...args) => Specish.defaultInstance.describe(...args);
 export const it = (...args) => Specish.defaultInstance.it(...args);
 export const beforeEach = (...args) =>

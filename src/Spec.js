@@ -4,12 +4,12 @@ export default class Spec {
     this.callback = callback;
   }
 
-  run(handler) {
+  run({ specPass, specFail }) {
     try {
       this.callback();
-      handler.specPass(this.description);
+      specPass(this.description);
     } catch (err) {
-      handler.specFail(this.description, err.message);
+      specFail(this.description, err.message);
     }
   }
 }
