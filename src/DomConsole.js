@@ -1,9 +1,26 @@
 export default class DomConsole {
   constructor(rootId, mockDocument) {
-    this.document = mockDocument || document;
+    this.document = mockDocument || DomConsole.getDom();
     const rootElement = this.document.getElementById(rootId);
     this.currentList = this.createElement("ul");
     rootElement.appendChild(this.currentList);
+  }
+
+  static getDom() {
+    try {
+      return document;
+    } catch (err) {
+      throw new Error(`DOM is not available (${err.message})`);
+    }
+  }
+
+  static isDomAvailable() {
+    try {
+      DomConsole.getDom();
+      return true;
+    } catch (err) {
+      return false;
+    }
   }
 
   createElement(tagName, text, childElement) {
