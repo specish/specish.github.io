@@ -1,33 +1,40 @@
 export default class DomConsole {
   constructor(rootId, mockDocument) {
     this.document = mockDocument || document;
-    const root = this.document.getElementById(rootId);
-    this.addListTo(root);
+    const rootElement = this.document.getElementById(rootId);
+    this.currentList = this.createElement("ul");
+    rootElement.appendChild(this.currentList);
   }
 
-  addListTo(element) {
-    this.currentList = this.document.createElement("ul");
-    element.appendChild(this.currentList);
-  }
+  createElement(tagName, text, childElement) {
+    const newElement = this.document.createElement(tagName);
+    if (text) {
+      newElement.textContent = text;
+    }
 
-  addItem(content) {
-    const item = this.document.createElement("li");
-    item.innerHTML = content;
-    this.currentList.appendChild(item);
-    return item;
+    if (childElement) {
+      newElement.appendChild(childElement);
+    }
+
+    return newElement;
   }
 
   log(message) {
-    this.addItem(message);
+    const item = this.createElement("li", message);
+    this.currentList.appendChild(item);
   }
 
   error(message) {
-    this.addItem(`<strong>${message}</strong>`);
+    const strong = this.createElement("strong", message);
+    const item = this.createElement("li", null, strong);
+    this.currentList.appendChild(item);
   }
 
   group(label) {
-    const item = this.addItem(label);
-    this.addListTo(item);
+    const childList = this.createElement("ul");
+    const item = this.createElement("li", label, childList);
+    this.currentList.appendChild(item);
+    this.currentList = childList;
   }
 
   groupEnd() {
