@@ -1,6 +1,6 @@
 {
   "name": "specish",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "description": "A small test framework based on ES6 modules.",
   "main": "index.js",
   "type": "module",
