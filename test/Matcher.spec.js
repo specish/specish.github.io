@@ -2,78 +2,92 @@ import { describe, it, expect, beforeEach } from "../src/Specish.js";
 import Matcher from "../src/Matcher.js";
 
 describe("Matcher", () => {
-  it("should create an instance", () => {
-    expect(new Matcher()).toBeDefined();
+  it("should not throw for a positive match", () => {
+    expect(() => new Matcher(true).toBe(true)).not.toThrowSomething();
+  });
+
+  it("should throw for a positive mismatch", () => {
+    expect(() => new Matcher(undefined).toBeDefined()).toThrowSomething();
+  });
+
+  describe("not", () => {
+    it("should not throw for a negative mismatch", () => {
+      expect(() =>
+        new Matcher(undefined).not.toBeDefined()
+      ).not.toThrowSomething();
+    });
+
+    it("should throw for a negative match", () => {
+      expect(() => new Matcher(true).not.toBe(true)).toThrowSomething();
+    });
   });
 
   describe("toBe", () => {
-    const firstNumber = 7;
-    const secondNumber = 13;
-    let expectFirstNumber;
-
-    beforeEach(() => {
-      expectFirstNumber = new Matcher(firstNumber);
+    it("should not throw for a matching boolean", () => {
+      expect(() => new Matcher(true).toBe(true)).not.toThrowSomething();
     });
 
-    it("should not throw for expected number comparisons", () => {
-      expectFirstNumber.toBe(firstNumber);
-      expectFirstNumber.not.toBe(secondNumber);
-      expectFirstNumber.not.not.toBe(firstNumber);
+    it("should throw for a non-matching boolean", () => {
+      expect(() => new Matcher(true).toBe(false)).toThrowSomething();
     });
 
-    it("should throw for unexpected number comparisons", () => {
-      expect(() => expectFirstNumber.toBe(secondNumber)).toThrowSomething();
-      expect(() => expectFirstNumber.not.toBe(firstNumber)).toThrowSomething();
+    it("should not throw for a matching number", () => {
+      expect(() => new Matcher(7).toBe(7)).not.toThrowSomething();
+    });
+
+    it("should throw for a non-matching number", () => {
+      expect(() => new Matcher(7).toBe(13)).toThrowSomething();
+    });
+
+    it("should not throw for a matching string", () => {
+      expect(() => new Matcher("foo").toBe("foo")).not.toThrowSomething();
+    });
+
+    it("should throw for a non-matching string", () => {
+      expect(() => new Matcher("foo").toBe("bar")).toThrowSomething();
+    });
+
+    it("should not throw for a matching reference", () => {
+      const obj = {};
       expect(() =>
-        expectFirstNumber.not.not.toBe(secondNumber)
-      ).toThrowSomething();
+        new Matcher(undefined).toBe(undefined)
+      ).not.toThrowSomething();
+      expect(() => new Matcher(null).toBe(null)).not.toThrowSomething();
+      expect(() => new Matcher(obj).toBe(obj)).not.toThrowSomething();
+    });
+
+    it("should throw for a non-matching reference", () => {
+      const obj = {};
+      expect(() => new Matcher(undefined).toBe(null)).toThrowSomething();
+      expect(() => new Matcher(null).toBe(obj)).toThrowSomething();
+      expect(() => new Matcher(obj).toBe({})).toThrowSomething();
     });
   });
 
   describe("toBeDefined", () => {
-    let expectUndefined;
-    let expectNull;
-    let expectString;
-
-    beforeEach(() => {
-      expectUndefined = new Matcher(undefined);
-      expectNull = new Matcher(null);
-      expectString = new Matcher("foo");
+    it("should not throw for matching comparisons", () => {
+      expect(() => new Matcher(null).toBeDefined()).not.toThrowSomething();
+      expect(() => new Matcher(true).toBeDefined()).not.toThrowSomething();
+      expect(() => new Matcher(7).toBeDefined()).not.toThrowSomething();
+      expect(() => new Matcher("foo").toBeDefined()).not.toThrowSomething();
     });
 
-    it("should not throw for expected comparisons", () => {
-      expectUndefined.not.toBeDefined();
-      expectNull.toBeDefined();
-      expectString.toBeDefined();
-    });
-
-    it("should throw for unexpected comparisons", () => {
-      expect(() => expectUndefined.toBeDefined()).toThrowSomething();
-      expect(() => expectNull.not.toBeDefined()).toThrowSomething();
-      expect(() => expectString.not.toBeDefined()).toThrowSomething();
+    it("should throw for non-matching comparisons", () => {
+      expect(() => new Matcher(undefined).toBeDefined()).toThrowSomething();
     });
   });
 
   describe("toThrowSomething", () => {
-    let expectNoException;
-    let expectException;
-
-    beforeEach(() => {
-      expectNoException = new Matcher("foo");
-      expectException = new Matcher(() => {
-        throw new Error();
-      });
+    it("should not throw for an expected throw", () => {
+      expect(() =>
+        new Matcher(() => {
+          throw "foo";
+        }).toThrowSomething()
+      ).not.toThrowSomething();
     });
 
-    it("should not throw for expected flow", () => {
-      expectNoException.not.toThrowSomething();
-      expectException.toThrowSomething();
-      expectException.not.not.toThrowSomething();
-    });
-
-    it("should throw for unexpected flow", () => {
-      expect(() => expectNoException.toThrowSomething()).toThrowSomething();
-      expect(() => expectException.not.toThrowSomething()).toThrowSomething();
+    it("should throw for an unexpected normal return", () => {
+      expect(() => new Matcher(() => {}).toThrowSomething()).toThrowSomething();
     });
   });
 });

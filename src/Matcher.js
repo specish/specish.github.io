@@ -1,28 +1,31 @@
 export default class Matcher {
-  constructor(actual, inverse) {
+  constructor(actual, positiveMatcher) {
     this.actual = actual;
-    this.sense = !inverse;
-    this.not = inverse || new Matcher(actual, this);
+    this.sense = !positiveMatcher;
+    this.not = positiveMatcher || new Matcher(actual, this);
   }
 
-  throwIf(condition, messageCallback) {
+  throwIf({ condition, message }) {
     if (!condition === !this.sense) {
-      throw new Error(messageCallback(this.sense ? "" : "not "));
+      const possibly = s => (this.sense ? s : `not ${s}`);
+      throw new Error(message(possibly));
     }
   }
 
   toBe(expected) {
-    this.throwIf(
-      this.actual !== expected,
-      not => `expected ${this.actual} ${not}to be ${expected}`
-    );
+    this.throwIf({
+      condition: this.actual !== expected,
+      message: possibly =>
+        `expected ${this.actual} ${possibly(`to be ${expected}`)}`
+    });
   }
 
   toBeDefined() {
-    this.throwIf(
-      this.actual === undefined,
-      not => `expected ${this.actual} ${not}to be defined`
-    );
+    this.throwIf({
+      condition: this.actual === undefined,
+      message: possibly =>
+        `expected ${this.actual} ${possibly(`to be defined`)}`
+    });
   }
 
   toThrowSomething() {
@@ -39,9 +42,10 @@ export default class Matcher {
       }
     }
 
-    this.throwIf(
-      !isSomethingThrown,
-      not => `expected ${this.actual} ${not}to throw something`
-    );
+    this.throwIf({
+      condition: !isSomethingThrown,
+      message: possibly =>
+        `expected ${this.actual} ${possibly(`to throw something`)}`
+    });
   }
 }
