@@ -3,6 +3,7 @@ import { runSuite } from "../src/Specish.js";
 import "./Demo.spec.js";
 import "../test/DomConsole.spec.js";
 import "../test/Matcher.spec.js";
+import "../test/Mock.spec.js";
 import "../test/RootSuite.spec.js";
 import "../test/Spec.spec.js";
 import "../test/Specish.spec.js";
