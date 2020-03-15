@@ -1,17 +1,28 @@
-import { describe, it, expect } from "../src/Specish.js";
+import { describe, it, expect, beforeEach } from "../src/Specish.js";
+import Mock from "../src/Mock.js";
 import Suite from "../src/Suite.js";
 
 describe("Suite", () => {
-  it("should create an instance", () => {
-    expect(new Suite()).toBeDefined();
-  });
-
   describe("run", () => {
-    it("should not throw if empty", () => {
-      const suite = new Suite();
-      const suiteStart = description => {};
-      const suiteEnd = () => {};
-      expect(() => suite.run({ suiteStart, suiteEnd })).not.toThrowSomething();
+    let suite;
+    let mockHandler;
+
+    beforeEach(() => {
+      suite = new Suite();
+      mockHandler = {
+        suiteStart: Mock.fn(),
+        suiteEnd: Mock.fn()
+      };
+    });
+
+    it("should call handler to start suite", () => {
+      suite.run(mockHandler);
+      expect(mockHandler.suiteStart).toHaveBeenCalled();
+    });
+
+    it("should call handler to end suite", () => {
+      suite.run(mockHandler);
+      expect(mockHandler.suiteEnd).toHaveBeenCalled();
     });
   });
 });
