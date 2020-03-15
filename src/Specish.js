@@ -38,7 +38,7 @@ export default class Specish {
 
   describe(description, callback) {
     const innerSuite = new Suite(description);
-    this.currentSuite.addInnerSuite(innerSuite);
+    this.currentSuite.innerSuites.push(innerSuite);
 
     const previousSuite = this.currentSuite;
     this.currentSuite = innerSuite;
@@ -48,15 +48,15 @@ export default class Specish {
 
   it(description, callback) {
     const spec = new Spec(description, callback);
-    this.currentSuite.addSpec(spec);
+    this.currentSuite.specs.push(spec);
   }
 
   beforeEach(callback) {
-    this.currentSuite.addPreSpec(callback);
+    this.currentSuite.preSpecs.push(callback);
   }
 
   afterEach(callback) {
-    this.currentSuite.addPostSpec(callback);
+    this.currentSuite.postSpecs.push(callback);
   }
 
   expect(actual) {

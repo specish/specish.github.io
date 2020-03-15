@@ -6,22 +6,6 @@ export default class RootSuite {
     this.innerSuites = [];
   }
 
-  addPreSpec(callback) {
-    this.preSpecs.push(callback);
-  }
-
-  addSpec(spec) {
-    this.specs.push(spec);
-  }
-
-  addPostSpec(callback) {
-    this.postSpecs.push(callback);
-  }
-
-  addInnerSuite(suite) {
-    this.innerSuites.push(suite);
-  }
-
   run(handler) {
     this.specs.forEach(spec => {
       this.preSpecs.forEach(preSpec => preSpec());

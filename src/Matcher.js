@@ -56,4 +56,22 @@ export default class Matcher {
         `expected ${this.actual} ${possibly(`to throw something`)}`
     });
   }
+
+  toHaveBeenCalled() {
+    this.throwIf({
+      condition: !this.actual.mock.calls.length,
+      message: possibly =>
+        `expected ${this.actual} ${possibly(`to have been called`)}`
+    });
+  }
+
+  toHaveBeenCalledTimes(times) {
+    this.throwIf({
+      condition: this.actual.mock.calls.length !== times,
+      message: possibly =>
+        `expected ${this.actual} ${possibly(
+          `to have been called ${times} time(s)`
+        )}`
+    });
+  }
 }

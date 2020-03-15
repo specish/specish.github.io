@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeEach } from "../src/Specish.js";
+import Mock from "../src/Mock.js";
 import Matcher from "../src/Matcher.js";
 
 describe("Matcher", () => {
@@ -110,6 +111,64 @@ describe("Matcher", () => {
 
     it("should throw for an unexpected normal return", () => {
       expect(() => new Matcher(() => {}).toThrowSomething()).toThrowSomething();
+    });
+  });
+
+  describe("toHaveBeenCalled", () => {
+    it("should not throw for a mock function that was called and returned normally", () => {
+      const mockFunction = Mock.fn();
+      mockFunction();
+      expect(() =>
+        new Matcher(mockFunction).toHaveBeenCalled()
+      ).not.toThrowSomething();
+    });
+
+    it("should not throw for a mock function that was called and threw", () => {
+      const mockFunction = Mock.fn(() => {
+        throw "foo";
+      });
+      try {
+        mockFunction();
+      } catch (e) {}
+      expect(() =>
+        new Matcher(mockFunction).toHaveBeenCalled()
+      ).not.toThrowSomething();
+    });
+
+    it("should throw for a mock function that was not called", () => {
+      const mockFunction = Mock.fn();
+      expect(() =>
+        new Matcher(mockFunction).toHaveBeenCalled()
+      ).toThrowSomething();
+    });
+  });
+
+  describe("toHaveBeenCalledTimes", () => {
+    const callTimes = (f, n) => {
+      for (let i = 0; i < n; i++) {
+        f();
+      }
+    };
+    let mockFunction;
+
+    beforeEach(() => {
+      mockFunction = Mock.fn();
+    });
+
+    it("should not throw for a mock function that was called the specified number of times", () => {
+      const times = 7;
+      callTimes(mockFunction, times);
+      expect(() =>
+        new Matcher(mockFunction).toHaveBeenCalledTimes(times)
+      ).not.toThrowSomething();
+    });
+
+    it("should throw for a mock function that was not called the specified number of times", () => {
+      const times = 7;
+      callTimes(mockFunction, times + 13);
+      expect(() =>
+        new Matcher(mockFunction).toHaveBeenCalledTimes(times)
+      ).toThrowSomething();
     });
   });
 });
