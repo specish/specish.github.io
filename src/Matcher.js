@@ -28,6 +28,14 @@ export default class Matcher {
     });
   }
 
+  toContain(value) {
+    this.throwIf({
+      condition: !this.actual.includes(value),
+      message: possibly =>
+        `expected ${this.actual} ${possibly(`to contain ${value}`)}`
+    });
+  }
+
   toThrowSomething() {
     let isSomethingThrown;
 

@@ -77,6 +77,28 @@ describe("Matcher", () => {
     });
   });
 
+  describe("toContain", () => {
+    it("should not throw for a matching string", () => {
+      expect(() =>
+        new Matcher("this is a test").toContain("is")
+      ).not.toThrowSomething();
+    });
+
+    it("should throw for a non-matching string", () => {
+      expect(() =>
+        new Matcher("this is a test").toContain("foo")
+      ).toThrowSomething();
+    });
+
+    it("should not throw for a matching array", () => {
+      expect(() => new Matcher([7, 13]).toContain(13)).not.toThrowSomething();
+    });
+
+    it("should throw for a non-matching array", () => {
+      expect(() => new Matcher([1, 2, 3]).toContain(0)).toThrowSomething();
+    });
+  });
+
   describe("toThrowSomething", () => {
     it("should not throw for an expected throw", () => {
       expect(() =>
