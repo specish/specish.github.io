@@ -138,11 +138,17 @@ describe("Mock", () => {
       });
     });
 
+    describe("mockName", () => {
+      it("should return the mock function", () => {
+        const mockFunction = Mock.fn();
+        expect(mockFunction.mockName("foo")).toBe(mockFunction);
+      });
+    });
+
     describe("toString", () => {
       it("should contain the mock name", () => {
-        const mockFunction = Mock.fn();
         const name = "foo";
-        mockFunction.mock.name = name;
+        const mockFunction = Mock.fn().mockName(name);
         expect(mockFunction.toString()).toContain(name);
       });
     });

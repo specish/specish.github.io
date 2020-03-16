@@ -36,7 +36,12 @@ export default class Mock {
       }
     };
 
-    f.toString = () => (f.mock.name ? `mock ${f.mock.name}` : `mock`);
+    f.mockName = name => {
+      f.mock.name = name;
+      return f;
+    };
+
+    f.toString = () => f.mock.name || "Mock.fn()";
 
     f.mock = new Mock(mockImplementation || (() => {}));
 

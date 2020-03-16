@@ -36,18 +36,10 @@ describe("RootSuite", () => {
 
     beforeEach(() => {
       rootSuite = new RootSuite();
-
-      mockPreSpec = Mock.fn();
-      mockPreSpec.mock.name = "pre-spec";
-
-      mockSpec = { run: Mock.fn() };
-      mockSpec.run.mock.name = "spec";
-
-      mockPostSpec = Mock.fn();
-      mockPostSpec.mock.name = "post-spec";
-
-      mockInnerSuite = { run: Mock.fn() };
-      mockInnerSuite.run.mock.name = "inner suite";
+      mockPreSpec = Mock.fn().mockName("PreSpec");
+      mockSpec = { run: Mock.fn().mockName("Spec") };
+      mockPostSpec = Mock.fn().mockName("PostSpec");
+      mockInnerSuite = { run: Mock.fn().mockName("InnerSuite") };
     });
 
     it("should run the spec once", () => {

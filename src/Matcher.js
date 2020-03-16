@@ -61,7 +61,9 @@ export default class Matcher {
     this.throwIf({
       condition: !this.actual.mock.calls.length,
       message: possibly =>
-        `expected ${this.actual} ${possibly(`to have been called`)}`
+        `expected mock function ${this.actual} ${possibly(
+          `to have been called`
+        )}`
     });
   }
 
@@ -69,7 +71,7 @@ export default class Matcher {
     this.throwIf({
       condition: this.actual.mock.calls.length !== times,
       message: possibly =>
-        `expected ${this.actual} ${possibly(
+        `expected mock function ${this.actual} ${possibly(
           `to have been called ${times} time(s)`
         )}`
     });
