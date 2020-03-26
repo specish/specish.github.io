@@ -1,4 +1,4 @@
-const resultType = {
+const ResultType = {
   RETURN: "return",
   THROW: "throw",
   INCOMPLETE: "incomplete"
@@ -12,9 +12,14 @@ export default class Mock {
     this.results = [];
   }
 
+  clear() {
+    this.calls = [];
+    this.results = [];
+  }
+
   start(...args) {
     this.calls.push([...args]);
-    this.results.push({ type: resultType.INCOMPLETE });
+    this.results.push({ type: ResultType.INCOMPLETE });
   }
 
   end(type, value) {
@@ -28,16 +33,21 @@ export default class Mock {
       f.mock.start(...args);
       try {
         const returnValue = f.mock.implementation(...args);
-        f.mock.end(resultType.RETURN, returnValue);
+        f.mock.end(ResultType.RETURN, returnValue);
         return returnValue;
       } catch (err) {
-        f.mock.end(resultType.THROW, err);
+        f.mock.end(ResultType.THROW, err);
         throw err;
       }
     };
 
     f.mockName = name => {
       f.mock.name = name;
+      return f;
+    };
+
+    f.mockClear = () => {
+      f.mock.clear();
       return f;
     };
 

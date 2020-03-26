@@ -3,9 +3,11 @@ import RootSuite from "./RootSuite.js";
 import Spec from "./Spec.js";
 import Suite from "./Suite.js";
 
-export default class Specish {
+class Specish {
   constructor() {
     this.currentSuite = new RootSuite();
+    this.preSpecs = [];
+    this.postSpecs = [];
   }
 
   runSuite(mockConsole) {
@@ -20,6 +22,8 @@ export default class Specish {
       suiteEnd: () => {
         localConsole.groupEnd();
       },
+      specStart: () => this.preSpecs.forEach(preSpec => preSpec()),
+      specEnd: () => this.postSpecs.forEach(postSpec => postSpec()),
       specPass: description => {
         passing++;
         localConsole.log(description);
@@ -37,13 +41,13 @@ export default class Specish {
   }
 
   describe(description, callback) {
-    const innerSuite = new Suite(description);
+    const innerSuite = new Suite(description, () => {
+      const previousSuite = this.currentSuite;
+      this.currentSuite = innerSuite;
+      callback();
+      this.currentSuite = previousSuite;
+    });
     this.currentSuite.innerSuites.push(innerSuite);
-
-    const previousSuite = this.currentSuite;
-    this.currentSuite = innerSuite;
-    callback();
-    this.currentSuite = previousSuite;
   }
 
   it(description, callback) {
@@ -52,11 +56,11 @@ export default class Specish {
   }
 
   beforeEach(callback) {
-    this.currentSuite.preSpecs.push(callback);
+    this.preSpecs.push(callback);
   }
 
   afterEach(callback) {
-    this.currentSuite.postSpecs.push(callback);
+    this.postSpecs.push(callback);
   }
 
   expect(actual) {

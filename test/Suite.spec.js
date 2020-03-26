@@ -4,25 +4,34 @@ import Suite from "../src/Suite.js";
 
 describe("Suite", () => {
   describe("run", () => {
-    let suite;
+    const description = {};
+    let mockCallback;
     let mockHandler;
 
     beforeEach(() => {
-      suite = new Suite();
+      mockCallback = Mock.fn().mockName("mockCallback");
       mockHandler = {
-        suiteStart: Mock.fn(),
-        suiteEnd: Mock.fn()
+        suiteStart: Mock.fn().mockName("suiteStart"),
+        suiteEnd: Mock.fn().mockName("suiteEnd")
       };
+
+      const suite = new Suite(description, mockCallback);
+      suite.run(mockHandler);
     });
 
-    it("should call handler to start suite", () => {
-      suite.run(mockHandler);
-      expect(mockHandler.suiteStart).toHaveBeenCalled();
+    it("should invoke callback once with no arguments", () => {
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenCalledWithShallow();
     });
 
-    it("should call handler to end suite", () => {
-      suite.run(mockHandler);
-      expect(mockHandler.suiteEnd).toHaveBeenCalled();
+    it("should invoke suiteStart once with description", () => {
+      expect(mockHandler.suiteStart).toHaveBeenCalledTimes(1);
+      expect(mockHandler.suiteStart).toHaveBeenCalledWithShallow(description);
+    });
+
+    it("should invoke suiteEnd once with no arguments", () => {
+      expect(mockHandler.suiteEnd).toHaveBeenCalledTimes(1);
+      expect(mockHandler.suiteEnd).toHaveBeenCalledWithShallow();
     });
   });
 });

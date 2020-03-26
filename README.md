@@ -12,3 +12,8 @@ Specish is a small test framework based on ES6 modules.
 > The latest version of Node.js has experimental support
 > which can be enabled by adding `"type": "module"`
 > in your `package.json` file.
+
+### TO DO
+
+- consider renaming Specish.js to specish.js
+- consider renaming Suite to InnerSuite and RootSuite to Suite

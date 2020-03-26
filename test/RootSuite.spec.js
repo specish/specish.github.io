@@ -3,21 +3,9 @@ import Mock from "../src/Mock.js";
 import RootSuite from "../src/RootSuite.js";
 
 describe("RootSuite", () => {
-  describe("preSpecs", () => {
-    it("should be empty initially", () => {
-      expect(new RootSuite().preSpecs.length).toBe(0);
-    });
-  });
-
   describe("specs", () => {
     it("should be empty initially", () => {
       expect(new RootSuite().specs.length).toBe(0);
-    });
-  });
-
-  describe("postSpecs", () => {
-    it("should be empty initially", () => {
-      expect(new RootSuite().postSpecs.length).toBe(0);
     });
   });
 
@@ -29,69 +17,29 @@ describe("RootSuite", () => {
 
   describe("run", () => {
     let rootSuite;
-    let mockPreSpec;
     let mockSpec;
-    let mockPostSpec;
     let mockInnerSuite;
 
     beforeEach(() => {
       rootSuite = new RootSuite();
-      mockPreSpec = Mock.fn().mockName("PreSpec");
-      mockSpec = { run: Mock.fn().mockName("Spec") };
-      mockPostSpec = Mock.fn().mockName("PostSpec");
-      mockInnerSuite = { run: Mock.fn().mockName("InnerSuite") };
+      mockSpec = { run: Mock.fn().mockName("run") };
+      mockInnerSuite = { run: Mock.fn().mockName("run") };
     });
 
-    it("should run the spec once", () => {
+    it("should run the spec once with handler", () => {
+      const handler = {};
       rootSuite.specs.push(mockSpec);
-      rootSuite.run();
+      rootSuite.run(handler);
       expect(mockSpec.run).toHaveBeenCalledTimes(1);
+      expect(mockSpec.run).toHaveBeenCalledWithShallow(handler);
     });
 
-    it("should run the inner suite once", () => {
+    it("should run the inner suite once with handler", () => {
+      const handler = {};
       rootSuite.innerSuites.push(mockInnerSuite);
-      rootSuite.run();
+      rootSuite.run(handler);
       expect(mockInnerSuite.run).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call the pre-spec once for each spec", () => {
-      rootSuite.preSpecs.push(mockPreSpec);
-      rootSuite.run();
-      expect(mockPreSpec).not.toHaveBeenCalled();
-
-      rootSuite.specs.push(mockSpec);
-      rootSuite.run();
-      expect(mockPreSpec).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call the post-spec once for each spec", () => {
-      rootSuite.postSpecs.push(mockPostSpec);
-      rootSuite.run();
-      expect(mockPostSpec).not.toHaveBeenCalled();
-
-      rootSuite.specs.push(mockSpec);
-      rootSuite.run();
-      expect(mockPostSpec).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call the pre-spec once for each inner suite", () => {
-      rootSuite.preSpecs.push(mockPreSpec);
-      rootSuite.run();
-      expect(mockPreSpec).not.toHaveBeenCalled();
-
-      rootSuite.innerSuites.push(mockInnerSuite);
-      rootSuite.run();
-      expect(mockPreSpec).toHaveBeenCalledTimes(1);
-    });
-
-    it("should call the post-spec once for each inner suite", () => {
-      rootSuite.postSpecs.push(mockPostSpec);
-      rootSuite.run();
-      expect(mockPostSpec).not.toHaveBeenCalled();
-
-      rootSuite.innerSuites.push(mockInnerSuite);
-      rootSuite.run();
-      expect(mockPostSpec).toHaveBeenCalledTimes(1);
+      expect(mockInnerSuite.run).toHaveBeenCalledWithShallow(handler);
     });
   });
 });

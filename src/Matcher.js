@@ -76,4 +76,18 @@ export default class Matcher {
         )}`
     });
   }
+
+  toHaveBeenCalledWithShallow(...args) {
+    this.throwIf({
+      condition: !this.actual.mock.calls.some(
+        actualArgs =>
+          actualArgs.length === args.length &&
+          actualArgs.every((actualArg, index) => actualArg === args[index])
+      ),
+      message: possibly =>
+        `expected mock function ${this.actual} ${possibly(
+          `to have been called with ${args}`
+        )}`
+    });
+  }
 }

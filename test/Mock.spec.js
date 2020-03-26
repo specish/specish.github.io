@@ -2,9 +2,11 @@ import { describe, it, expect, beforeEach } from "../src/Specish.js";
 import Mock from "../src/Mock.js";
 
 describe("Mock", () => {
-  it("should retain the implementation", () => {
-    const implementation = () => {};
-    expect(new Mock(implementation).implementation).toBe(implementation);
+  describe("constructor", () => {
+    it("should save the implementation", () => {
+      const implementation = () => {};
+      expect(new Mock(implementation).implementation).toBe(implementation);
+    });
   });
 
   describe("name", () => {
@@ -142,6 +144,29 @@ describe("Mock", () => {
       it("should return the mock function", () => {
         const mockFunction = Mock.fn();
         expect(mockFunction.mockName("foo")).toBe(mockFunction);
+      });
+    });
+
+    describe("mockClear", () => {
+      it("should return the mock function", () => {
+        const mockFunction = Mock.fn();
+        expect(mockFunction.mockClear()).toBe(mockFunction);
+      });
+
+      it("should clear the calls array", () => {
+        const mockFunction = Mock.fn();
+        mockFunction();
+        expect(mockFunction).toHaveBeenCalledTimes(1);
+        mockFunction.mockClear();
+        expect(mockFunction).not.toHaveBeenCalled();
+      });
+
+      it("should clear the results array", () => {
+        const mockFunction = Mock.fn();
+        mockFunction();
+        expect(mockFunction.mock.results.length).toBe(1);
+        mockFunction.mockClear();
+        expect(mockFunction.mock.results.length).toBe(0);
       });
     });
 
