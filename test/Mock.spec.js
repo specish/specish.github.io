@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "../src/Specish.js";
+import { describe, it, expect, beforeEach } from "../src/specish.js";
 import Mock from "../src/Mock.js";
 
 describe("Mock", () => {

@@ -1,7 +1,7 @@
-import { describe, it, beforeEach, afterEach, expect } from "../src/Specish.js";
+import { describe, it, beforeEach, afterEach, expect } from "../src/specish.js";
 import Mock from "../src/Mock.js";
 
-describe("Specish", () => {
+describe("specish", () => {
   let mockPreSpec;
   let mockPostSpec;
   let mockSpec;

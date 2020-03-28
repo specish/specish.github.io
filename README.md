@@ -16,4 +16,3 @@ Specish is a small test framework based on ES6 modules.
 ### TO DO
 
 - finish test coverage
-- consider renaming Specish.js to specish.js
