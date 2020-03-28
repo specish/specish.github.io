@@ -5,15 +5,11 @@ export default class Spec {
   }
 
   run(handler) {
-    handler.specStart();
-
     try {
       this.callback();
       handler.specPass(this.description);
     } catch (err) {
       handler.specFail(this.description, err.message);
     }
-
-    handler.specEnd();
   }
 }

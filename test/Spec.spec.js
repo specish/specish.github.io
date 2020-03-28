@@ -8,35 +8,19 @@ describe("Spec", () => {
 
     beforeEach(() => {
       mockHandler = {
-        specStart: Mock.fn().mockName("specStart"),
-        specEnd: Mock.fn().mockName("specEnd"),
         specPass: Mock.fn().mockName("specPass"),
         specFail: Mock.fn().mockName("specFail")
       };
     });
 
-    it("should invoke specStart and specEnd once each for a callback that returns normally", () => {
-      const spec = new Spec(null, () => {});
+    it("should invoke the callback once", () => {
+      const mockCallback = Mock.fn().mockName("mockCallback");
+      const spec = new Spec({}, mockCallback);
 
       spec.run(mockHandler);
 
-      expect(mockHandler.specStart).toHaveBeenCalledTimes(1);
-      expect(mockHandler.specStart).toHaveBeenCalledWithShallow();
-      expect(mockHandler.specEnd).toHaveBeenCalledTimes(1);
-      expect(mockHandler.specEnd).toHaveBeenCalledWithShallow();
-    });
-
-    it("should invoke specStart and specEnd once each for a callback that throws", () => {
-      const spec = new Spec(null, () => {
-        throw { message: null };
-      });
-
-      spec.run(mockHandler);
-
-      expect(mockHandler.specStart).toHaveBeenCalledTimes(1);
-      expect(mockHandler.specStart).toHaveBeenCalledWithShallow();
-      expect(mockHandler.specEnd).toHaveBeenCalledTimes(1);
-      expect(mockHandler.specEnd).toHaveBeenCalledWithShallow();
+      expect(mockCallback).toHaveBeenCalledTimes(1);
+      expect(mockCallback).toHaveBeenCalledWithShallow();
     });
 
     it("should invoke specPass once for a callback that returns normally", () => {

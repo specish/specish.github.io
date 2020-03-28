@@ -5,13 +5,11 @@ describe("Specish", () => {
   let mockPreSpec;
   let mockPostSpec;
   let mockSpec;
-  let mockInnerSuite;
 
   beforeEach(() => {
     mockPreSpec = Mock.fn().mockName("mockPreSpec");
     mockPostSpec = Mock.fn().mockName("mockPostSpec");
     mockSpec = Mock.fn().mockName("mockSpec");
-    mockInnerSuite = Mock.fn().mockName("mockInnerSuite");
   });
 
   beforeEach(() => mockPreSpec());
@@ -37,7 +35,7 @@ describe("Specish", () => {
       expect(mockPostSpec).not.toHaveBeenCalled();
     });
 
-    it("(mock post-spec)", mockPostSpec);
+    it("(mock post-spec)", () => mockPostSpec());
 
     it("should not be invoked before any subsequent spec", () => {
       expect(mockPostSpec).not.toHaveBeenCalled();
@@ -49,7 +47,7 @@ describe("Specish", () => {
       expect(mockSpec).not.toHaveBeenCalled();
     });
 
-    it("(mock spec)", mockSpec);
+    it("(mock spec)", () => mockSpec());
 
     it("should not be invoked before any subsequent spec", () => {
       expect(mockSpec).not.toHaveBeenCalled();
@@ -57,10 +55,14 @@ describe("Specish", () => {
   });
 
   describe("Inner suite callback", () => {
+    const mockInnerSuite = Mock.fn().mockName("mockInnerSuite");
+
+    // Arrow function not needed since mockInnerSuite is a const function
     describe("(mock inner suite)", mockInnerSuite);
 
-    it("should not be invoked before any spec", () => {
-      expect(mockInnerSuite).not.toHaveBeenCalled();
+    it("should be invoked once before any spec", () => {
+      expect(mockInnerSuite).toHaveBeenCalledTimes(1);
+      expect(mockInnerSuite).toHaveBeenCalledWithShallow();
     });
   });
 });

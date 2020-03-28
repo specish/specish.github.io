@@ -1,37 +1,41 @@
 import Matcher from "./Matcher.js";
-import RootSuite from "./RootSuite.js";
 import Spec from "./Spec.js";
 import Suite from "./Suite.js";
 
 class Specish {
   constructor() {
-    this.currentSuite = new RootSuite();
-    this.preSpecs = [];
-    this.postSpecs = [];
+    this.currentSuite = null;
+    this.rootSuites = [];
   }
 
-  runSuite(mockConsole) {
+  throwIfRoot() {
+    if (!this.currentSuite) {
+      throw new Error("Invalid operation at root. Please use describe().");
+    }
+  }
+
+  runAll(mockConsole) {
     const localConsole = mockConsole || console;
     let passing = 0;
     let failing = 0;
 
-    this.currentSuite.run({
-      suiteStart: description => {
-        localConsole.group(description);
-      },
-      suiteEnd: () => {
-        localConsole.groupEnd();
-      },
-      specStart: () => this.preSpecs.forEach(preSpec => preSpec()),
-      specEnd: () => this.postSpecs.forEach(postSpec => postSpec()),
-      specPass: description => {
-        passing++;
-        localConsole.log(description);
-      },
-      specFail: (description, message) => {
-        failing++;
-        localConsole.error(`${description} ---> ${message}`);
-      }
+    this.rootSuites.forEach(suite => {
+      suite.run({
+        suiteStart: description => {
+          localConsole.group(description);
+        },
+        suiteEnd: () => {
+          localConsole.groupEnd();
+        },
+        specPass: description => {
+          passing++;
+          localConsole.log(description);
+        },
+        specFail: (description, message) => {
+          failing++;
+          localConsole.error(`${description} ---> ${message}`);
+        }
+      });
     });
 
     localConsole.log(`Passing: ${passing}`);
@@ -41,26 +45,34 @@ class Specish {
   }
 
   describe(description, callback) {
-    const innerSuite = new Suite(description, () => {
-      const previousSuite = this.currentSuite;
-      this.currentSuite = innerSuite;
-      callback();
-      this.currentSuite = previousSuite;
-    });
-    this.currentSuite.innerSuites.push(innerSuite);
+    const parentSuite = this.currentSuite;
+    this.currentSuite = new Suite(parentSuite, description);
+
+    const suites = parentSuite ? parentSuite.innerSuites : this.rootSuites;
+    suites.push(this.currentSuite);
+
+    callback();
+
+    this.currentSuite = parentSuite;
   }
 
   it(description, callback) {
+    this.throwIfRoot();
+
     const spec = new Spec(description, callback);
     this.currentSuite.specs.push(spec);
   }
 
   beforeEach(callback) {
-    this.preSpecs.push(callback);
+    this.throwIfRoot();
+
+    this.currentSuite.preSpecs.push(callback);
   }
 
   afterEach(callback) {
-    this.postSpecs.push(callback);
+    this.throwIfRoot();
+
+    this.currentSuite.postSpecs.push(callback);
   }
 
   expect(actual) {
@@ -70,7 +82,7 @@ class Specish {
 
 Specish.defaultInstance = new Specish();
 
-export const runSuite = (...args) => Specish.defaultInstance.runSuite(...args);
+export const runAll = (...args) => Specish.defaultInstance.runAll(...args);
 export const describe = (...args) => Specish.defaultInstance.describe(...args);
 export const it = (...args) => Specish.defaultInstance.it(...args);
 export const beforeEach = (...args) =>
