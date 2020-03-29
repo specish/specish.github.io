@@ -15,4 +15,4 @@ Specish is a small test framework based on ES6 modules.
 
 ### TO DO
 
-- finish test coverage
+- finish test coverage (esp. for `Suite.js` and `specish.js`)
